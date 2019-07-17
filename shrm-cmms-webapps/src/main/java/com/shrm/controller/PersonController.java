@@ -1,11 +1,11 @@
-package com.shrm.functions;
+package com.shrm.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssm.demo.entity.Person;
-import com.ssm.demo.service.PersonService;
+import com.shrm.bean.Person;
+import com.shrm.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,6 +16,7 @@ public class PersonController {
 
     @Autowired
     private PersonService personService;
+
     @RequestMapping("/selectPerson")
     public void selectPerson(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -23,7 +24,7 @@ public class PersonController {
         response.setCharacterEncoding("utf-8");
 
         long personId = Long.parseLong(request.getParameter("id"));
-        Person person =personService.findPersonById(personId);
+        Person person = personService.findPersonById(personId);
 
         ObjectMapper mapper = new ObjectMapper();
 
