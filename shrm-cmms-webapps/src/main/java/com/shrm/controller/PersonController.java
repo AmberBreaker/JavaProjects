@@ -26,9 +26,9 @@ public class PersonController {
         long personId = Long.parseLong(request.getParameter("id"));
         Person person = personService.findPersonById(personId);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        response.getWriter().write(mapper.writeValueAsString(person));
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        response.getWriter().write(mapper.writeValueAsString(person));
         response.getWriter().close();
     }
 }
