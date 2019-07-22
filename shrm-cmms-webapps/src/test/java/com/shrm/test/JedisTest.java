@@ -6,13 +6,21 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * Jedis 测试类
+ * @author lmm
+ */
 public class JedisTest {
 
-    /**
-     * 通过java程序访问redis
-     */
+    private static Jedis jedis;
+
+    static {
+        jedis = JedisPoolUtils.getJedis();
+    }
+
+    /*通过java程序访问redis*/
     @Test
-    public void fun01() {
+    public void setAndGetFunction() {
         Jedis jedis = new Jedis("47.105.108.215", 6379);
         jedis.set("username","zhangsan");
         System.out.println(jedis.get("username"));
@@ -20,11 +28,9 @@ public class JedisTest {
         System.out.println(jedis.get("username"));
     }
 
-    /**
-     * 通过jedis的pool获得连接对象
-     */
+    /*通过jedis的pool获得连接对象*/
     @Test
-    public void fun02() {
+    public void jedisPool() {
         // 0：创建池子的配置对象
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxIdle(30);  // 最小闲置个数
@@ -46,9 +52,38 @@ public class JedisTest {
         pool.close();
     }
 
+    /*删除*/
     @Test
-    public void fun03() {
-        Jedis jedis = JedisPoolUtils.getJedis();
+    public void delete() {
+        jedis.del("username");
         System.out.println(jedis.get("username"));
+    }
+
+    /*数值增减*/
+    @Test
+    public void numbicModify() {
+        jedis.del("age");
+        // 自增(increase),若查出该key为nil，则默认为0
+        jedis.incr("age");
+        System.out.println(jedis.get("age"));
+        // 自减(decrease)
+        jedis.decr("age");
+        System.out.println(jedis.get("age"));
+        // 增加指定数值
+        jedis.incrBy("age",10);
+        System.out.println(jedis.get("age"));
+        jedis.decrBy("age",10);
+        System.out.println(jedis.get("age"));
+    }
+
+    /*拼接字符串*/
+    @Test
+    public void appendStr() {
+        jedis.set("username","zhangsan");
+        jedis.append("username","123");
+        System.out.println(jedis.get("username"));
+        jedis.set("age","1");
+        jedis.append("age","2");
+        System.out.println(jedis.get("age"));
     }
 }

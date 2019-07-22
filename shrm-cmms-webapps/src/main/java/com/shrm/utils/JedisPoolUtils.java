@@ -1,6 +1,5 @@
 package com.shrm.utils;
 
-import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -34,9 +33,8 @@ public class JedisPoolUtils {
                 Integer.parseInt(prop.getProperty("redis.port")));
     }
 
+    /*从JedisPool中获取Jedis对象*/
     public static Jedis getJedis() {
         return jedisPool.getResource();
     }
-
-
 }
