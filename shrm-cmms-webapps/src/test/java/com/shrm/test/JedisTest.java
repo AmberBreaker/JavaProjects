@@ -6,6 +6,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Jedis 测试类
  * @author lmm
@@ -85,5 +89,23 @@ public class JedisTest {
         jedis.set("age","1");
         jedis.append("age","2");
         System.out.println(jedis.get("age"));
+    }
+
+    @Test
+    public void hashSet() {
+        jedis.hset("member","name","zhangsan");
+        String name = jedis.hget("member", "name");
+        System.out.println(name);
+        String[] arr = new String[2];
+        Map<String, String> map = new HashMap<>();
+        map.put("sex","male");
+        map.put("age","19");
+        jedis.hmset("member",map);
+        List<String> list = jedis.hmget("member","name", "age", "sex");
+        for (String s : list) {
+            System.out.println(s);
+        }
+
+        Map<String, String> member = jedis.hgetAll("member");
     }
 }
