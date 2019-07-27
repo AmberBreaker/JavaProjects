@@ -7,11 +7,13 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Jedis 测试类
+ *
  * @author lmm
  */
 public class JedisTest {
@@ -26,9 +28,9 @@ public class JedisTest {
     @Test
     public void setAndGetFunction() {
         Jedis jedis = new Jedis("47.105.108.215", 6379);
-        jedis.set("username","zhangsan");
+        jedis.set("username", "zhangsan");
         System.out.println(jedis.get("username"));
-        jedis.set("username","lisi");
+        jedis.set("username", "lisi");
         System.out.println(jedis.get("username"));
     }
 
@@ -74,38 +76,61 @@ public class JedisTest {
         jedis.decr("age");
         System.out.println(jedis.get("age"));
         // 增加指定数值
-        jedis.incrBy("age",10);
+        jedis.incrBy("age", 10);
         System.out.println(jedis.get("age"));
-        jedis.decrBy("age",10);
+        jedis.decrBy("age", 10);
         System.out.println(jedis.get("age"));
     }
 
     /*拼接字符串*/
     @Test
     public void appendStr() {
-        jedis.set("username","zhangsan");
-        jedis.append("username","123");
+        jedis.set("username", "zhangsan");
+        jedis.append("username", "123");
         System.out.println(jedis.get("username"));
-        jedis.set("age","1");
-        jedis.append("age","2");
+        jedis.set("age", "1");
+        jedis.append("age", "2");
         System.out.println(jedis.get("age"));
     }
 
+    /*hash*/
     @Test
     public void hashSet() {
-        jedis.hset("member","name","zhangsan");
-        String name = jedis.hget("member", "name");
-        System.out.println(name);
-        String[] arr = new String[2];
+        // hset member name zhangsan
+        jedis.hset("member", "name", "zhangsan");
+
+        // hget member name
+        System.out.println(jedis.hget("member", "name"));
+
+        // hset member sex male age 19
         Map<String, String> map = new HashMap<>();
-        map.put("sex","male");
-        map.put("age","19");
-        jedis.hmset("member",map);
-        List<String> list = jedis.hmget("member","name", "age", "sex");
+        map.put("sex", "male");
+        map.put("age", "19");
+        jedis.hmset("member", map);
+
+        // hget member name age sex
+        List<String> list = jedis.hmget("member", "name", "age", "sex");
         for (String s : list) {
             System.out.println(s);
         }
 
+        // hincrby member age 5，参数可为负
+        jedis.hincrBy("member","age", 5);
+
+        // hgetall member
         Map<String, String> member = jedis.hgetAll("member");
+        Iterator<String> iterator = member.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = (String) iterator.next();
+            System.out.println("key:" + key + " value:" + member.get(key));
+        }
+
+        // hdel member sex age
+        Long hdel = jedis.hdel("member", "sex", "age");
+        System.out.println(hdel); // 操作数量
+
+        // del member
+        Long del = jedis.del("member");
+        System.out.println(del);
     }
 }
