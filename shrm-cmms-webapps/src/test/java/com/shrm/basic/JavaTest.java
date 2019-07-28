@@ -46,7 +46,7 @@ public class JavaTest {
                 List<String> key3List = (List) m.get("key3");
                 key3List.add((String) map.get("key3"));
             } else {
-                Map<String, Object> m = new HashMap();
+                Map<String, Object> m = new HashMap<>();
                 m.putAll(map);
                 List<String> l = new ArrayList<>();
                 l.add((String) map.get("key3"));
