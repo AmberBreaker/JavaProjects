@@ -2,14 +2,15 @@ package com.shrm.test;
 
 import com.shrm.utils.JedisPoolUtils;
 import org.junit.Test;
+import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
 
 import java.util.List;
 
 /**
- * list存储
+ * list
  */
-public class JedisListSavingTest {
+public class JedisListTest {
 
     private static Jedis jedis;
 
@@ -91,11 +92,48 @@ public class JedisListSavingTest {
      */
     @Test
     public void leftSet() {
-        jedis.lpush("mylist", "1", "2", "3");
-        // lset mylist 0 11 (0代表第一个)
+        jedis.lpush("mylist", "3", "2", "1"); // 1 2 3
+        // lset mylist 0 11 (0代表第一个，将链表第一个值改为11)
         jedis.lset("mylist", 0, "11"); // 11 2 3
-        // lset mylist -1 33 (-1代表最后一个)
+        // lset mylist -1 33 (-1代表最后一个，将链表的最后一个值改为33 )
         jedis.lset("mylist", -1, "33"); // 11 2 33
         jedis.del("mylist");
+    }
+
+    /*
+     *
+     * linsert key before|after pivot value
+     */
+    @Test
+    public void linsert() {
+        jedis.del("mylist");
+        jedis.lpush("mylist", "c", "b", "a");
+        jedis.lpush("mylist", "c", "b", "a"); // a b c a b c
+        // linsert mylist before b x (在mylist链表中的第一个b元素之前添加x元素，返回该链表中的总数量)
+        Long linsert1 = jedis.linsert("mylist",
+                BinaryClient.LIST_POSITION.BEFORE, "b", "x");
+        // linsert mylist after b y (在mylist链表中的第一个b元素之后添加y元素，返回该链表中的总数量)
+        Long linsert2 = jedis.linsert("mylist",
+                BinaryClient.LIST_POSITION.AFTER, "b", "y");
+        jedis.del("mylist");
+    }
+
+    @Test
+    public void popPush() {
+        jedis.del("mylist1");
+        jedis.del("mylist2");
+
+        jedis.rpush("mylist1", "1", "2", "3"); // mylist1: 1 2 3
+        jedis.rpush("mylist2", "a", "b", "c"); // mylist2: a b c
+
+        // rpoplpush mylist1 mylist2
+        // 将mylist1最右侧数值抽出，插入到mylist2最左侧，并返回被操作的数值
+        String ele = jedis.rpoplpush("mylist1", "mylist2");
+        // mylist1: 1 2
+        // mylist2: 3 a b c
+        // ele = 3
+
+        jedis.del("mylist1");
+        jedis.del("mylist2");
     }
 }
