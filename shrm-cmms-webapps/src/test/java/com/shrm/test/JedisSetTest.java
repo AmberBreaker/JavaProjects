@@ -129,21 +129,4 @@ public class JedisSetTest {
         // 没有从set中抽离出去
         Set<String> myset1 = jedis.smembers("myset"); // a b c
     }
-
-    @Test
-    public void test() {
-        jedis.del("test1");
-        jedis.del("test2");
-
-        jedis.sadd("test1","a","b","c");
-        jedis.sadd("test2","1","2","3");
-
-        jedis.del("test?");
-
-        System.out.println(jedis.scard("test1"));
-        System.out.println(jedis.scard("test2"));
-
-        jedis.del("test1");
-        jedis.del("test2");
-    }
 }
