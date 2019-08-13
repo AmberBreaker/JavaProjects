@@ -30,6 +30,7 @@ public class JedisSortedSet {
         // zadd mysortedset 1 a
         Long a = jedis.zadd("mysortedset", 1, "a"); // a = 1
         Long b = jedis.zadd("mysortedset", 2, "b"); // b = 1
+        jedis.zadd("mysortedset", 3, "a"); // mysortedset 长度为仍为2，a的权值为3
 
         // zscore mysortedset a
         Double zscore = jedis.zscore("mysortedset", "a"); // zscore = 1.0
@@ -102,21 +103,84 @@ public class JedisSortedSet {
     }
 
     /**
-     *
+     * 根据权重范围查询或删除
+     * zremrangebyscore key start end
+     * zrangebyscore key min max
      */
     @Test
-    public void zremrangebyrank() {
+    public void zrangebyscore() {
         jedis.del("mysortedset");
 
         jedis.zadd("mysortedset", 10, "a");
         jedis.zadd("mysortedset", 20, "b");
         jedis.zadd("mysortedset", 30, "c");
 
+        // zremrangebyscore mysortedset 10 20
+        Long delNum = jedis.zremrangeByScore("mysortedset", 11, 21);
 
-        Long delNum = jedis.zremrangeByRank("mysortedset", 9, 21);
+        // zcount mysortedset 10 30
+        Long remainNum = jedis.zcount("mysortedset", 10, 30); // mysortedset1 = 2
 
+        // zrangebyscore mysortedset 0 30
+        Set<String> mysortedset = jedis.zrangeByScore("mysortedset", 0, 30);
+
+        jedis.del("mysortedset");
+    }
+
+    /**
+     * 根据排序范围删除
+     * zremrangebyrank key start end
+     */
+    @Test
+    public void zrangebyrank() {
+        jedis.del("mysortedset");
+
+        jedis.zadd("mysortedset", 10, "a");
+        jedis.zadd("mysortedset", 20, "b");
+        jedis.zadd("mysortedset", 30, "c");
+
+        // zremrangebyrank mysortedset 0 1
+        Long delNum = jedis.zremrangeByRank("mysortedset", 0, 1); // delNum = 2
+        // c
         Set<String> mysortedset = jedis.zrange("mysortedset", 0, -1);
 
+        jedis.del("mysortedset");
+    }
+
+    /**
+     * zincrby key score member
+     */
+    @Test
+    public void zincrby() {
+        jedis.del("mysortedset");
+
+        jedis.zadd("mysortedset", 10, "a");
+        jedis.zadd("mysortedset", 20, "b");
+        jedis.zadd("mysortedset", 30, "c");
+
+        Set<Tuple> mysortedset = jedis.zrangeWithScores("mysortedset", 0, -1);
+
+        Double score = jedis.zincrby("mysortedset", 5, "a"); // score = 15.0
+
+        jedis.del("mysortedset");
+    }
+
+    /**
+     * 返回成员在集合中的排名
+     * zrank mysortedset b
+     */
+    @Test
+    public void zrank() {
+        jedis.del("mysortedset");
+
+        jedis.zadd("mysortedset",10,"a");
+        jedis.zadd("mysortedset",20,"b");
+        jedis.zadd("mysortedset",30,"c");
+
+        // zrank mysortedset a
+        Long memberRank = jedis.zrank("mysortedset", "a"); // memberRank = 0
+        // zrevrank mysortedset c
+        Long memberRevRank = jedis.zrevrank("mysortedset", "c"); // memberRevRank = 0
 
         jedis.del("mysortedset");
     }
