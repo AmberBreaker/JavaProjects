@@ -6,7 +6,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class JedisStringTest {
+public class JedisString {
 
     private static Jedis jedis;
 
@@ -19,9 +19,8 @@ public class JedisStringTest {
     public void setAndGetFunction() {
         Jedis jedis = new Jedis("47.105.108.215", 6379);
         jedis.set("username", "zhangsan");
-        System.out.println(jedis.get("username"));
         jedis.set("username", "lisi");
-        System.out.println(jedis.get("username"));
+        jedis.del("username");
     }
 
     /*通过jedis的pool获得连接对象*/
@@ -59,29 +58,41 @@ public class JedisStringTest {
     @Test
     public void numbicModify() {
         jedis.del("age");
-        // 自增(increase),若查出该key为nil，则默认为0
-        jedis.incr("age");
-        System.out.println(jedis.get("age"));
-        // 自减(decrease)
-        jedis.decr("age");
-        System.out.println(jedis.get("age"));
-        // 增加指定数值
-        jedis.incrBy("age", 10);
-        System.out.println(jedis.get("age"));
-        jedis.decrBy("age", 10);
-        System.out.println(jedis.get("age"));
+        /*
+         * incr key
+         * 自增(increase),若查出该key为nil，则默认为0
+         */
+        jedis.incr("age"); // 1
+        /*
+         * decr key
+         * 自减(decrease)
+         */
+        jedis.decr("age"); // 0
+        /*
+         * incrby key integer
+         * 增加指定数值
+         */
+        jedis.incrBy("age", 10); // 10
+        /*
+         * decrby key integer
+         * 减去指定数值
+         */
+        jedis.decrBy("age", 10); // 0
     }
 
     /*拼接字符串*/
     @Test
     public void appendStr() {
-        jedis.set("username", "zhangsan");
-        jedis.append("username", "123");
-        System.out.println(jedis.get("username"));
-        jedis.set("age", "1");
-        jedis.append("age", "2");
-        System.out.println(jedis.get("age"));
-        Long username = jedis.del("username");
-        System.out.println(username);
+        // set key value
+        jedis.set("username", "zhangsan"); // username zhangsan
+        // append key value
+        jedis.append("username", "123"); // username zhangsan123
+        // set key value
+        jedis.set("age", "1"); // age 1
+        // append key value
+        jedis.append("age", "2"); // age 12
+
+        jedis.del("username");
+        jedis.del("age");
     }
 }

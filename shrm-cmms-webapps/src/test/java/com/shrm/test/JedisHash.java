@@ -13,7 +13,7 @@ import java.util.*;
  *
  * @author lmm
  */
-public class JedisHashTest {
+public class JedisHash {
 
     private static Jedis jedis;
 
@@ -24,11 +24,10 @@ public class JedisHashTest {
     /*hash*/
     @Test
     public void hashSet() {
-        // hset member name zhangsan
-        jedis.hset("member", "name", "zhangsan");
-
-        // hget member name
-        System.out.println(jedis.hget("member", "name"));
+        // hset key field value
+        jedis.hset("member", "name", "zhangsan"); // member {name = zhangsan}
+        // hget key field
+        String name = jedis.hget("member", "name"); // name = zhangsan
 
         // hset member sex male age 19
         Map<String, String> map = new HashMap<>();
@@ -38,9 +37,6 @@ public class JedisHashTest {
 
         // hget member name age sex
         List<String> list = jedis.hmget("member", "name", "age", "sex");
-        for (String s : list) {
-            System.out.println(s);
-        }
 
         // hincrby member age 5，参数可为负
         jedis.hincrBy("member", "age", 5);
@@ -54,25 +50,21 @@ public class JedisHashTest {
         }
 
         // hdel member sex age
-        Long hdel = jedis.hdel("member", "sex", "age");
-        System.out.println(hdel); // 操作数量
+        Long hdel = jedis.hdel("member", "sex", "age"); // hdel = 2
 
         // del member
-        Long del = jedis.del("member");
-        System.out.println(del);
+        Long del = jedis.del("member"); // del = 1
     }
 
     /*判断是否存在*/
     @Test
     public void hexist() {
         jedis.hset("member", "username", "zhangsan");
-        // hexists member username
-        Boolean hexists = jedis.hexists("member", "username");
+        // hexists key field
         // 判断 username 在 member 中是否存在，存在为true，不存在为false
-        System.out.println(hexists);
-        Long member = jedis.del("member");
-        System.out.println(member);
-        System.out.println(jedis.hexists("member", "username"));
+        Boolean isExists = jedis.hexists("member", "username"); // true
+        jedis.del("member");
+        isExists = jedis.hexists("member", "username"); // false
     }
 
     /*hash大小*/
@@ -82,12 +74,10 @@ public class JedisHashTest {
         map.put("sex", "male");
         map.put("age", "19");
         jedis.hmset("member", map);
-        // hlen member
-        Long member = jedis.hlen("member");
-        System.out.println(member);
-        jedis.del("member");
+        // hlen key
         // 即使没有 member 也不会报错，返回长度为0
-        System.out.println(jedis.hlen("member"));
+        Long hlen = jedis.hlen("member"); // hlen = 2
+        jedis.del("member");
     }
 
     /*获取所有的键或值*/

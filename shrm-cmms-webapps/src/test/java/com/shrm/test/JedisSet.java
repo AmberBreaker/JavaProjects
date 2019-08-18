@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Set
  */
-public class JedisSetTest {
+public class JedisSet {
 
     private static Jedis jedis;
 
@@ -109,7 +109,7 @@ public class JedisSetTest {
     @Test
     public void scard() {
         jedis.del("myset");
-        jedis.sadd("myset","a","b","c");
+        jedis.sadd("myset", "a", "b", "c");
 
         // scard key
         Long myset = jedis.scard("myset"); // 3
@@ -121,7 +121,7 @@ public class JedisSetTest {
     @Test
     public void randomMember() {
         jedis.del("myset");
-        jedis.sadd("myset","a","b","c");
+        jedis.sadd("myset", "a", "b", "c");
 
         // srandmember key
         String myset = jedis.srandmember("myset");

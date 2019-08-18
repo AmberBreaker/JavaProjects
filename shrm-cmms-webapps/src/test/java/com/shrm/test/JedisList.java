@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * list
  */
-public class JedisListTest {
+public class JedisList {
 
     private static Jedis jedis;
 
@@ -130,7 +130,7 @@ public class JedisListTest {
         // 将mylist1最右侧数值抽出，插入到mylist2最左侧，并返回被操作的数值
         String ele = jedis.rpoplpush("mylist1", "mylist2");
         // mylist1: 1 2
-        // mylist2: 3 a b c
+        // mylist2: 3 a b c16
         // ele = 3
 
         jedis.del("mylist1");
