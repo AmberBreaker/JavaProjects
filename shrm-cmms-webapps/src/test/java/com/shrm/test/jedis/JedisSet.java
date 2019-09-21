@@ -1,4 +1,4 @@
-package com.shrm.test;
+package com.shrm.test.jedis;
 
 import com.shrm.utils.JedisPoolUtils;
 import org.junit.Test;
