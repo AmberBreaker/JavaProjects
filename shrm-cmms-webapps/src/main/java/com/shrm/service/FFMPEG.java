@@ -54,7 +54,7 @@ public class FFMPEG {
      * (可选)vb:视频比特率,传入一个数值,单位在程序里面拼接了k
      * (可选)ab:音频比特率,传入一个数值,单位在程序里面拼接了k
      */
-    public String videoTransfer(HashMap<String, String> dto) {
+    public String videoTransfer(final Map<String, String> dto) {
         List<String> cmd = new ArrayList<String>();
         cmd.add(dto.get("ffmpeg_path"));
         cmd.add("-y");
