@@ -67,8 +67,8 @@ public class FFMPEG {
         if (null != dto.get("logo")) {
             String logo = dto.get("logo");
             cmd.add("-vf");
-            String xaxis = StringUtils.isEmpty(dto.get("xaxis")) ? "0" : "xaxis";
-            String yaxis = StringUtils.isEmpty(dto.get("yaxis")) ? "0" : "yaxis";
+            String xaxis = StringUtils.isEmpty(dto.get("xaxis")) ? "0" : dto.get("xaxis");
+            String yaxis = StringUtils.isEmpty(dto.get("yaxis")) ? "0" : dto.get("yaxis");
 
             String logoString = "movie=" + logo + "[logo],[in][logo]overlay=x="
                     + xaxis + ":y=" + yaxis + "[out]";

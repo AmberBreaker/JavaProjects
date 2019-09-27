@@ -78,6 +78,7 @@ public class VideoThumbTakerTest {
     /**
      * 新建线程可以解决 videoTransferTest2 遇到的问题
      */
+    @Test
     public void videoTransferTest3() {
         System.out.println("开始调用");
         Map<String, String> dto = new HashMap<String, String>();
