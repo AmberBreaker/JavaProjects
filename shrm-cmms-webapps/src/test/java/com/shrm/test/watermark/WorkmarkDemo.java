@@ -46,4 +46,10 @@ public class WorkmarkDemo {
         }
     }
 
+    @Test
+    public void test3() {
+        char c1 = 'a';
+        char c2 = 'b';
+        System.out.println(c1 + c2);
+    }
 }
