@@ -3,10 +3,10 @@
         <environment id="dev">
             <!-- 配置数据源信息 -->
             <datasource type="DBCP">
-                <properties name="driver" value="com.mysql.jdbc.Driver" />
-                <properties name="url" value="jdbc:mysql://47.105.108.215:3306/mybatis?useUnicode=true&characterEncoding=utf8&useSSL=false" />
-                <properties name="username" value="root" />
-                <properties name="password" value="nxcswd" />
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://47.105.108.215:3306/mybatis?useUnicode=true&characterEncoding=utf8&useSSL=false"/>
+                <property name="username" value="root" />
+                <property name="password" value="nxcswd" />
             </datasource>
         </environment>
 

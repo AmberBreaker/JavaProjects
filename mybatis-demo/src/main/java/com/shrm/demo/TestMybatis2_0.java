@@ -6,22 +6,30 @@ import com.shrm.pojo.User;
 import com.shrm.sqlsource.BoundSql;
 import com.shrm.sqlsource.ParameterMapping;
 import com.shrm.sqlsource.iface.SqlSource;
+import com.shrm.utils.DocumentUtils;
 import com.shrm.utils.SimpleTypeRegistry;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.dom4j.Document;
+import org.dom4j.Element;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
- * 1:42:40
+ * 2:00:00
  * 目的是使用XML来表达mybatis的全局配置信息和业务相关的映射信息。
  * 其次优化数据连接的创建（使用连接池）。
  */
 public class TestMybatis2_0 {
+
+    private Configuration configuration = new Configuration();
 
     public List<Object> queryByJDBC(Configuration configuration, String statementId, Object param) {
         Connection connection = null;
@@ -87,14 +95,62 @@ public class TestMybatis2_0 {
 
     /**
      * 解析XML，获取配置文件
-     * TODO
      */
-    private Configuration loadConfiguration() {
+    private void loadConfiguration(String location) {
 
-        // 解析XML
+        // 读取指定路径的配置文件
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(location);
+        // 根据InputStream流，创建Document对（使用sax解析）
+        Document document = DocumentUtils.readDocument(inputStream);
+        parseConfiguration(document.getRootElement());
+        // 按照XML标签中的语义去解析
 
+    }
 
-        return null;
+    private void parseConfiguration(Element rootElement) {
+        Element environments = rootElement.element("environments");
+        parseEnvironments(environments);
+        Element mappers = rootElement.element("mappers");
+        parseMapper(mappers);
+    }
+
+    private void parseEnvironments(Element environments) {
+        String def = environments.attributeValue("default");
+        List<Element> elements = environments.elements("environment");
+        for (Element envElement : elements) {
+            if ("dev".equals(def)) {
+                parseEnvironment(envElement);
+                break;
+            }
+        }
+    }
+
+    private void parseEnvironment(Element envElement) {
+        Element dataSource = envElement.element("datasource");
+        parseDataSource(dataSource);
+    }
+
+    private void parseDataSource(Element dataSourceElements) {
+        String typeValue = dataSourceElements.attributeValue("type");
+        if ("DBCP".equals(typeValue)) {
+            BasicDataSource dataSource = new BasicDataSource();
+            Properties dsProperties = new Properties();
+            List<Element> properties = dataSourceElements.elements("property");
+            for (Element element : properties) {
+                String name = element.attributeValue("name");
+                String value = element.attributeValue("value");
+                dsProperties.setProperty(name, value);
+            }
+            dataSource.setDriverClassName(dsProperties.getProperty("driver"));
+            dataSource.setUrl(dsProperties.getProperty("url"));
+            dataSource.setUsername(dsProperties.getProperty("username"));
+            dataSource.setPassword(dsProperties.getProperty("password"));
+            this.configuration.setDataSource(dataSource);
+        }
+    }
+
+    private void parseMapper(Element mappers) {
+
     }
 
     /**
@@ -169,7 +225,7 @@ public class TestMybatis2_0 {
     @Test
     public void test() {
         // 加载XML配置文件，包括全局配置文件和映射配置文件
-        Configuration configuration = loadConfiguration();
+        loadConfiguration("config/mybatis-config.xml");
         String statementId = "test.findUserById";
 
         User user = new User();
