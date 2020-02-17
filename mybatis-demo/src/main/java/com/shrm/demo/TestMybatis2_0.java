@@ -3,8 +3,11 @@ package com.shrm.demo;
 import com.shrm.config.Configuration;
 import com.shrm.config.MappedStatement;
 import com.shrm.pojo.User;
+import com.shrm.sqlnode.iface.SqlNode;
 import com.shrm.sqlsource.BoundSql;
+import com.shrm.sqlsource.DynamicSqlSource;
 import com.shrm.sqlsource.ParameterMapping;
+import com.shrm.sqlsource.RawSqlSource;
 import com.shrm.sqlsource.iface.SqlSource;
 import com.shrm.utils.DocumentUtils;
 import com.shrm.utils.SimpleTypeRegistry;
@@ -23,13 +26,16 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * 2:00:00
  * 目的是使用XML来表达mybatis的全局配置信息和业务相关的映射信息。
  * 其次优化数据连接的创建（使用连接池）。
  */
 public class TestMybatis2_0 {
 
     private Configuration configuration = new Configuration();
+
+    private String namespace;
+
+    private boolean isDynamic;
 
     public List<Object> queryByJDBC(Configuration configuration, String statementId, Object param) {
         Connection connection = null;
@@ -59,7 +65,9 @@ public class TestMybatis2_0 {
             }
             // 获取SqlSource
             SqlSource sqlSource = mappedStatement.getSqlSource();
+            // 执行sqlSource去获取Sql信息
             BoundSql boundSql = sqlSource.getBoundSql(param);
+            // 获取jdbc可直接执行的sql语句
             String sql = boundSql.getSql();
 
             /**
@@ -110,8 +118,8 @@ public class TestMybatis2_0 {
     private void parseConfiguration(Element rootElement) {
         Element environments = rootElement.element("environments");
         parseEnvironments(environments);
-        Element mappers = rootElement.element("mappers");
-        parseMapper(mappers);
+        Element mapperElements = rootElement.element("mappers");
+        parseMapper(mapperElements);
     }
 
     private void parseEnvironments(Element environments) {
@@ -149,8 +157,68 @@ public class TestMybatis2_0 {
         }
     }
 
-    private void parseMapper(Element mappers) {
+    private void parseMapper(Element mapperElements) {
+        List<Element> mappers = mapperElements.elements("mapper");
+        Element mapper = mappers.get(0);
+        String resource = mapper.attributeValue("resource");
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resource);
+        Document document = DocumentUtils.readDocument(inputStream);
+        parseXmlMapper(document.getRootElement());
+    }
 
+    private void parseXmlMapper(Element rootElement) {
+        this.namespace = rootElement.attributeValue("namespace");
+        List<Element> selectElements = rootElement.elements("select");
+        for (Element selectElement : selectElements) {
+            parseStatementElement(selectElement);
+        }
+    }
+
+    private void parseStatementElement(Element selectElement) {
+
+        String statementId = this.namespace + "." +selectElement.attributeValue("id");
+        Class<?> parameterType = resolveType(selectElement.attributeValue("parameterType"));
+        Class<?> resultType = resolveType(selectElement.attributeValue("resultType"));
+
+        String statementType = selectElement.attributeValue("statementType");
+        statementType = statementType == null ? "prepared" : statementType;
+
+        // 解析SQL信。
+        SqlSource sqlSource = createSqlSource(selectElement);
+        MappedStatement mappedStatement = new MappedStatement(sqlSource, statementType, statementId, parameterType, resultType);
+        configuration.addMappedStatement(statementId, mappedStatement);
+    }
+
+    private SqlSource createSqlSource(Element selectElement) {
+        return parseScriptNode(selectElement);
+    }
+
+    private SqlSource parseScriptNode(Element selectElement) {
+        SqlNode mixedSqlNode = parseDynamicTags(selectElement);
+        // isDynamic是parseDynamicTags过程中得到的值。
+        SqlSource sqlSource;
+        if (this.isDynamic) { // 包含{}或者动态SQL标签
+            sqlSource = new DynamicSqlSource(mixedSqlNode);
+        } else { //
+            sqlSource = new RawSqlSource(mixedSqlNode);
+        }
+
+        return sqlSource;
+    }
+
+    private SqlNode parseDynamicTags(Element selectElement) {
+
+        return null;
+    }
+
+
+    private Class<?> resolveType(String parameterTypeStr) {
+        try {
+            return Class.forName(parameterTypeStr);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

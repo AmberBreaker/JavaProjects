@@ -17,6 +17,16 @@ public class MappedStatement {
 
     private Class<?> resultTypeClass;
 
+    public MappedStatement () {}
+
+    public MappedStatement(SqlSource sqlSource, String statementType, String statementId, Class<?> parameterTypeClass, Class<?> resultTypeClass) {
+        this.sqlSource = sqlSource;
+        this.statementType = statementType;
+        this.statementId = statementId;
+        this.parameterTypeClass = parameterTypeClass;
+        this.resultTypeClass = resultTypeClass;
+    }
+
     public SqlSource getSqlSource() {
         return sqlSource;
     }
