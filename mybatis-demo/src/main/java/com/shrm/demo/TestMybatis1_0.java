@@ -12,7 +12,7 @@ public class TestMybatis1_0 {
     /**
      * 加载properties文件
      */
-    private Properties loadProperties() {
+    public Properties loadProperties() {
         Properties properties = new Properties();
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("properties/db.properties");
         try {
@@ -23,7 +23,7 @@ public class TestMybatis1_0 {
         return properties;
     }
 
-    private ResultSet executeJDBC(Properties properties, String param) {
+    public ResultSet executeJDBC(Properties properties, String param) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
