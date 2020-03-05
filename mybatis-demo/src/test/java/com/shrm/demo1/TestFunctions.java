@@ -48,4 +48,36 @@ public class TestFunctions {
     public void tmpTest() {
         System.out.println(String.class == String.class);
     }
+
+    @Test
+    public void test3() {
+        StringBuffer sb = new StringBuffer("abc");
+        appendSb(sb);
+        String substring = sb.substring(0, sb.length() - 1);
+        System.out.println(substring.toString());
+    }
+
+    private void appendSb(StringBuffer sb) {
+        sb.append("dec");
+    }
+
+    @Test
+    public void test4() {
+        String column = "adsAfGeFG";
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < column.length(); i++) {
+            char ch = column.charAt(i);
+            if (Character.isUpperCase(ch)) {
+                sb.append("_");
+            }
+            sb.append(Character.toUpperCase(ch));
+        }
+        System.out.println(sb.toString());
+    }
+
+    @Test
+    public void test5() {
+        System.out.println(Character.isUpperCase('_'));
+        System.out.println(Character.toUpperCase('_'));
+    }
 }

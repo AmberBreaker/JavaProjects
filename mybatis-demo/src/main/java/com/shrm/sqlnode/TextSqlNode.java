@@ -17,4 +17,14 @@ public class TextSqlNode implements SqlNode {
     public void apply(DynamicContext dynamicContext) {
 
     }
+
+    /**
+     * 判断保存数据是否动态
+     */
+    public boolean isDynamic() {
+        if (sqlText.indexOf("${") > -1) {
+            return true;
+        }
+        return false;
+    }
 }

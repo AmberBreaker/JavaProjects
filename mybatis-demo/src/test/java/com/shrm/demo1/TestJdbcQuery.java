@@ -2,6 +2,7 @@ package com.shrm.demo1;
 
 import com.shrm.demo.TestMybatis1_0;
 import com.shrm.pojo.User;
+import com.shrm.utils.StringUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-public class TestJdbcExecutor {
+public class TestJdbcQuery {
 
     TestMybatis1_0 initService = new TestMybatis1_0();
 
@@ -37,7 +38,7 @@ public class TestJdbcExecutor {
                 T beanClass = clazz.newInstance();
                 for (Field field : declaredFields) {
                     String fieldName = field.getName();
-                    Method beanSetMethod = clazz.getDeclaredMethod("set" + capitalize(fieldName), field.getType());
+                    Method beanSetMethod = clazz.getDeclaredMethod("set" + StringUtil.capitalize(fieldName), field.getType());
                     Object rs = getValueWithType(field, resultSet);
                     beanSetMethod.invoke(beanClass, rs);
                 }
@@ -68,17 +69,5 @@ public class TestJdbcExecutor {
         }
 
         return returnObj;
-    }
-
-    private String capitalize(String str) {
-        if (str == null || str.length() == 0) {
-            return null;
-        }
-        char firstChar = str.charAt(0);
-        if (Character.isTitleCase(firstChar)) {
-            return str;
-        }
-        return new StringBuilder().append(Character.toTitleCase(firstChar))
-                .append(str.substring(1, str.length())).toString();
     }
 }

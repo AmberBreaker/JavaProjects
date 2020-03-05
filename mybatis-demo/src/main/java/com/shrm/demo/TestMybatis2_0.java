@@ -3,6 +3,10 @@ package com.shrm.demo;
 import com.shrm.config.Configuration;
 import com.shrm.config.MappedStatement;
 import com.shrm.pojo.User;
+import com.shrm.sqlnode.IfSqlNode;
+import com.shrm.sqlnode.MixedSqlNode;
+import com.shrm.sqlnode.StaticTextSqlNode;
+import com.shrm.sqlnode.TextSqlNode;
 import com.shrm.sqlnode.iface.SqlNode;
 import com.shrm.sqlsource.BoundSql;
 import com.shrm.sqlsource.DynamicSqlSource;
@@ -14,6 +18,8 @@ import com.shrm.utils.SimpleTypeRegistry;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.Text;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -190,25 +196,69 @@ public class TestMybatis2_0 {
     }
 
     private SqlSource createSqlSource(Element selectElement) {
-        return parseScriptNode(selectElement);
+        // 去解析select等CURD标签中的SQL脚本信息
+        SqlSource sqlSource = parseScriptNode(selectElement);
+        return sqlSource;
     }
 
     private SqlSource parseScriptNode(Element selectElement) {
-        SqlNode mixedSqlNode = parseDynamicTags(selectElement);
+        // 1、解析出来所有的SqlNode信息
+        MixedSqlNode rootSqlNode = parseDynamicTags(selectElement);
         // isDynamic是parseDynamicTags过程中得到的值。
         SqlSource sqlSource;
+
+        // 1、将SqlNode中的信息封装到SqlSource中，并且要根据是否动态节点去选择不同到SqlSource
+        // 如果 isDynamic 为true，则说明SqlNode集合信息里包含${}SqlNode节点信息或者元动态标签的节点信息。
         if (this.isDynamic) { // 包含{}或者动态SQL标签
-            sqlSource = new DynamicSqlSource(mixedSqlNode);
+            sqlSource = new DynamicSqlSource(rootSqlNode);
         } else { //
-            sqlSource = new RawSqlSource(mixedSqlNode);
+            sqlSource = new RawSqlSource(rootSqlNode);
         }
 
         return sqlSource;
     }
 
-    private SqlNode parseDynamicTags(Element selectElement) {
+    private MixedSqlNode parseDynamicTags(Element selectElement) {
+        List<SqlNode> sqlNodeList = new ArrayList<>();
+        int nodeCount = selectElement.nodeCount();
 
-        return null;
+        // 获取select标签的子标签
+        for (int i = 0; i < nodeCount; i++) {
+            Node node = selectElement.node(i);
+            // 区分是文本标签还是元素标签
+            if (node instanceof Text) {
+                // 文本
+                String text = node.getText();
+                TextSqlNode textSqlNode = new TextSqlNode(text);
+                if (textSqlNode.isDynamic()) {
+                    this.isDynamic = true;
+                    sqlNodeList.add(textSqlNode);
+                } else {
+                    sqlNodeList.add(new StaticTextSqlNode(text));
+                }
+
+            } else if (node instanceof Element) {
+                // 元素
+                this.isDynamic = true;
+
+                // 获取动态标签的标签名称
+                String nodeName = node.getName();
+
+                if ("if".equals(nodeName)) {
+                    // 封装IfSqlNode信息（test信息、子标签信息）。
+                    Element ifNode = (Element) node;
+                    String testAttribute = ifNode.attributeValue("test"); // if标签test属性值。
+                    MixedSqlNode rootSqlNode = parseDynamicTags(ifNode); // if标签test标签值。
+
+                    // IfSqlNode就是封装if标签信息的。
+                    IfSqlNode ifSqlNode = new IfSqlNode(testAttribute, rootSqlNode); // if标签子标签信息。
+                    sqlNodeList.add(ifSqlNode);
+                }
+
+            }
+        }
+
+        return new MixedSqlNode(sqlNodeList);
     }
 
 
