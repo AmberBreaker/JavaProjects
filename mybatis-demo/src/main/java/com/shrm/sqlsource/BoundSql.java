@@ -14,6 +14,11 @@ public class BoundSql {
     // 解析过程中产生的SQL参数信息。
     private List<ParameterMapping> parameterMappings = new ArrayList<>();
 
+    public BoundSql(String sql, List<ParameterMapping> parameterMappings) {
+        this.sql = sql;
+        this.parameterMappings = parameterMappings;
+    }
+
     public String getSql() {
         return sql;
     }

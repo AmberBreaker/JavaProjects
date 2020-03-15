@@ -115,7 +115,7 @@ public class TestMybatis2_0 {
         // 读取指定路径的配置文件
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(location);
         // 根据InputStream流，创建Document对（使用sax解析）
-        Document document = DocumentUtils.readDocument(inputStream);
+        Document document = DocumentUtils.readDocument(inputStream); // TODO
         parseConfiguration(document.getRootElement());
         // 按照XML标签中的语义去解析
 
@@ -183,15 +183,15 @@ public class TestMybatis2_0 {
     private void parseStatementElement(Element selectElement) {
 
         String statementId = this.namespace + "." +selectElement.attributeValue("id");
-        Class<?> parameterType = resolveType(selectElement.attributeValue("parameterType"));
+        Class<?> parameterType = resolveType(selectElement.attributeValue("parameterType")); // TODO
         Class<?> resultType = resolveType(selectElement.attributeValue("resultType"));
 
         String statementType = selectElement.attributeValue("statementType");
         statementType = statementType == null ? "prepared" : statementType;
 
         // 解析SQL信。
-        SqlSource sqlSource = createSqlSource(selectElement);
-        MappedStatement mappedStatement = new MappedStatement(sqlSource, statementType, statementId, parameterType, resultType);
+        SqlSource sqlSource = createSqlSource(selectElement); // TODO
+        MappedStatement mappedStatement = new MappedStatement(sqlSource, statementType, statementId, parameterType, resultType); // TODO
         configuration.addMappedStatement(statementId, mappedStatement);
     }
 
@@ -209,8 +209,8 @@ public class TestMybatis2_0 {
 
         // 1、将SqlNode中的信息封装到SqlSource中，并且要根据是否动态节点去选择不同到SqlSource
         // 如果 isDynamic 为true，则说明SqlNode集合信息里包含${}SqlNode节点信息或者元动态标签的节点信息。
-        if (this.isDynamic) { // 包含{}或者动态SQL标签
-            sqlSource = new DynamicSqlSource(rootSqlNode);
+        if (this.isDynamic) { // 包含${}或者动态SQL标签
+            sqlSource = new DynamicSqlSource(rootSqlNode); // TODO ===================
         } else { //
             sqlSource = new RawSqlSource(rootSqlNode);
         }
@@ -218,13 +218,13 @@ public class TestMybatis2_0 {
         return sqlSource;
     }
 
-    private MixedSqlNode parseDynamicTags(Element selectElement) {
+    private MixedSqlNode parseDynamicTags(Element tagElement) {
         List<SqlNode> sqlNodeList = new ArrayList<>();
-        int nodeCount = selectElement.nodeCount();
+        int nodeCount = tagElement.nodeCount();
 
         // 获取select标签的子标签
         for (int i = 0; i < nodeCount; i++) {
-            Node node = selectElement.node(i);
+            Node node = tagElement.node(i);
             // 区分是文本标签还是元素标签
             if (node instanceof Text) {
                 // 文本
@@ -236,11 +236,9 @@ public class TestMybatis2_0 {
                 } else {
                     sqlNodeList.add(new StaticTextSqlNode(text));
                 }
-
             } else if (node instanceof Element) {
                 // 元素
                 this.isDynamic = true;
-
                 // 获取动态标签的标签名称
                 String nodeName = node.getName();
 
@@ -254,10 +252,8 @@ public class TestMybatis2_0 {
                     IfSqlNode ifSqlNode = new IfSqlNode(testAttribute, rootSqlNode); // if标签子标签信息。
                     sqlNodeList.add(ifSqlNode);
                 }
-
             }
         }
-
         return new MixedSqlNode(sqlNodeList);
     }
 
@@ -336,6 +332,7 @@ public class TestMybatis2_0 {
                 // 给映射的对象赋值
                 field.set(result, value);
             }
+            results.add(result);
         }
         return results;
     }
@@ -347,9 +344,13 @@ public class TestMybatis2_0 {
         String statementId = "test.findUserById";
 
         User user = new User();
-        user.setId(1);
+//        user.setId(1);
+        user.setUsername("王五");
         // 执行JDBC代码，并返回已经映射的结果
-        User result = (User) queryByJDBC(configuration, statementId, user);
-        System.out.println(result);
+        queryByJDBC(configuration, statementId, user);
+        List<Object> userList = (List<Object>) queryByJDBC(configuration, statementId, user);
+        for (Object users : userList) {
+            System.out.println(users.toString());
+        }
     }
 }

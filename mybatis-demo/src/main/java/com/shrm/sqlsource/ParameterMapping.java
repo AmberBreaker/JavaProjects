@@ -24,4 +24,8 @@ public class ParameterMapping {
     public void setType(Class<?> type) {
         this.type = type;
     }
+
+    public ParameterMapping(String context) {
+        this.name = context;
+    }
 }
