@@ -257,7 +257,6 @@ public class TestMybatis2_0 {
         return new MixedSqlNode(sqlNodeList);
     }
 
-
     private Class<?> resolveType(String parameterTypeStr) {
         try {
             return Class.forName(parameterTypeStr);

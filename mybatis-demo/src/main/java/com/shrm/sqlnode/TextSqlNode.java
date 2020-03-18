@@ -60,7 +60,7 @@ public class TextSqlNode implements SqlNode {
                 // context.getBindings().put("value", paramObject);
                 return String.valueOf(paramObject);
             }
-            Object value = OgnlUtils.getValue(expression, context.getBinding());
+            Object value = OgnlUtils.getValue(expression, paramObject);
             return value == null ? "" : String.valueOf(value);
         }
     }
