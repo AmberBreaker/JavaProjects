@@ -345,8 +345,6 @@ public class TestMybatis2_0 {
         User user = new User();
 //        user.setId(1);
         user.setUsername("王五");
-        // 执行JDBC代码，并返回已经映射的结果
-        queryByJDBC(configuration, statementId, user);
         List<Object> userList = (List<Object>) queryByJDBC(configuration, statementId, user);
         for (Object users : userList) {
             System.out.println(users.toString());
