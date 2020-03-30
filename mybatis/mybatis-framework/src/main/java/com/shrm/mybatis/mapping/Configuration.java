@@ -3,8 +3,12 @@ package com.shrm.mybatis.mapping;
 import com.shrm.mybatis.executor.CachingExecutor;
 import com.shrm.mybatis.executor.SimpleExecutor;
 import com.shrm.mybatis.executor.iface.Executor;
+import com.shrm.mybatis.handler.DefaultParameterHandler;
+import com.shrm.mybatis.handler.DefaultResultSetHandler;
 import com.shrm.mybatis.handler.PreparedStatementHandler;
 import com.shrm.mybatis.handler.SimpleStatementHandler;
+import com.shrm.mybatis.handler.iface.ParameterHandler;
+import com.shrm.mybatis.handler.iface.ResultSetHandler;
 import com.shrm.mybatis.handler.iface.StatementHandler;
 
 import javax.sql.DataSource;
@@ -58,7 +62,8 @@ public class Configuration {
         StatementHandler statementHandler = null;
         switch (mappedStatement.getStatementType()){
             case "prepared" :
-                statementHandler = new PreparedStatementHandler(mappedStatement, boundSql);
+                statementHandler = new PreparedStatementHandler(this, mappedStatement, boundSql);
+                // TODO: 参数【configuration】能不能用 this 代替
                 break;
 
             case "simple" :
@@ -69,6 +74,14 @@ public class Configuration {
                 break;
         }
 
-        return null;
+        return statementHandler;
+    }
+
+    public ParameterHandler newParameterHandler(MappedStatement mappedStatement, BoundSql boundSql) {
+        return new DefaultParameterHandler(mappedStatement, boundSql);
+    }
+
+    public ResultSetHandler newResultSetHandler(MappedStatement mappedStatement) {
+        return new DefaultResultSetHandler(mappedStatement);
     }
 }

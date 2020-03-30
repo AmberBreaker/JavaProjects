@@ -35,7 +35,6 @@ public class DefaultSqlSession implements SqlSession {
             return null;
         }
         try {
-//            Connection connection = configuration.getDataSource().getConnection();
             Executor executor = configuration.newExecutor();
             return (List<T>) executor.executeQuery(mappedStatement, param, configuration, null);
         } catch (Exception e) {
