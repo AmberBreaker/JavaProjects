@@ -5,17 +5,17 @@ package com.blairscott.ioc;
  */
 public class RuntimeBeanReference {
 
-    private Object ref;
+    private String ref;
 
-    public RuntimeBeanReference(Object ref) {
+    public RuntimeBeanReference(String ref) {
         this.ref = ref;
     }
 
-    public Object getRef() {
+    public String getRef() {
         return ref;
     }
 
-    public void setRef(Object ref) {
+    public void setRef(String ref) {
         this.ref = ref;
     }
 }
