@@ -2,31 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>spring-basic</artifactId>
+        <groupId>com.blairscott</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../spring-basic/pom.xml</relativePath>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.blairscott</groupId>
-    <artifactId>spring-basic</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>spring-framework</artifactId>
 
-    <build>
-        <plugins>
-            <!-- 配置Maven的JDK编译级别 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <modules>
-        <module>../spring-framework</module>
-    </modules>
     <dependencies>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -66,10 +51,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.blairscott</groupId>
-            <artifactId>spring-framework</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
         </dependency>
     </dependencies>
-
 </project>

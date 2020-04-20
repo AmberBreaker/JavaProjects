@@ -9,11 +9,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl_1 implements UserDao {
+public class UserDaoImpl implements UserDao {
 
     private DataSource dataSource;
 
-    public UserDaoImpl_1(DataSource dataSource) {
+    public UserDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

@@ -5,7 +5,7 @@
 	</bean>
 
 	<!-- 该类有一个初始化方法 -->
-	<bean id="userDao" class="com.blairscott.dao.impl.UserDaoImpl_1" init-method="init">
+	<bean id="userDao" class="com.blairscott.dao.impl.UserDaoImpl">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 

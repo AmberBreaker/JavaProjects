@@ -1,6 +1,6 @@
 package com.blairscott.test;
 
-import com.blairscott.dao.impl.UserDaoImpl_1;
+import com.blairscott.dao.impl.UserDaoImpl;
 import com.blairscott.po.User;
 import com.blairscott.service.UserServiceImpl;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -20,7 +20,7 @@ public class TestSpringV1 {
         dataSource.setUsername("root");
         dataSource.setPassword("nxcswd");
 
-        UserDaoImpl_1 userDao = new UserDaoImpl_1(dataSource);
+        UserDaoImpl userDao = new UserDaoImpl(dataSource);
         service.setUserDao(userDao);
         // 调用UserService的方法
         User user = new User();
