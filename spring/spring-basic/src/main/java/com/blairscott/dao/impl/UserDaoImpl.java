@@ -17,6 +17,8 @@ public class UserDaoImpl implements UserDao {
         this.dataSource = dataSource;
     }
 
+    public UserDaoImpl() {}
+
     @Override
     public List<User> queryUserList(String sqlId, Object param) {
         Connection connection = null;

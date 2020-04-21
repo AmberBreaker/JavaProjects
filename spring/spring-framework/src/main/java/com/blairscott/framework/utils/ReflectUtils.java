@@ -14,9 +14,7 @@ public class ReflectUtils {
 	 */
 	public static Object createObject(Class<?> clazz, Object... args) {
 		try {
-			// TODO 可以根据输入参数获取指定构造参数的构造方法
 			Constructor<?> constructor = clazz.getConstructor();
-			// 默认调用无参构造进行对象的创建
 			return constructor.newInstance(args);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -35,6 +33,12 @@ public class ReflectUtils {
 		}
 	}
 
+	/**
+	 * 获取类中属性的类型
+	 * @param beanClassName 类全名
+	 * @param name 注定属性名
+	 * @return 指定属性类型
+	 */
 	public static Class<?> getTypeByFieldName(String beanClassName, String name) {
 		try {
 			Class<?> clazz = Class.forName(beanClassName);

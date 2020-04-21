@@ -69,19 +69,19 @@ public class XmlBeanDefinitionDocumentReader {
         String value = propertyElement.attributeValue("value");
         String ref = propertyElement.attributeValue("ref");
         if (value != null && !value.equals("") && ref != null && !ref.equals("")) {
+            // ref不为空且value不为空
             return;
         }
-        PropertyValue pv = null;
+        PropertyValue propertyValue = null;
         if (value != null && !value.equals("")) {
-            TypedStringValue typeStringValue = new TypedStringValue(value, null);
             Class<?> targetType = ReflectUtils.getTypeByFieldName(beanDefinition.getClazzName(), name);
-            typeStringValue.setTargetType(targetType);
-            pv = new PropertyValue(name, typeStringValue);
-            beanDefinition.addPropertyValue(pv);
+            TypedStringValue typeStringValue = new TypedStringValue(value, targetType);
+            propertyValue = new PropertyValue(name, typeStringValue);
+            beanDefinition.addPropertyValue(propertyValue);
         } else if (ref != null && !ref.equals("")) {
             RuntimeBeanReference reference = new RuntimeBeanReference(ref);
-            pv = new PropertyValue(name, reference);
-            beanDefinition.addPropertyValue(pv);
+            propertyValue = new PropertyValue(name, reference);
+            beanDefinition.addPropertyValue(propertyValue);
         } else {
             return;
         }

@@ -16,14 +16,19 @@ public class TestSpringV3 {
     public void test() throws Exception {
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+
         Resource resource = new ClasspathResource("beans.xml");
         InputStream inputStream = resource.getResource();
 
         reader.loadBeanDefinitions(inputStream);
 
         UserService service = (UserService) factory.getBean("userService");
-        User user = new User();
-        user.setUsername("wangwu");
-        List<User> users = service.queryUsers(user);
+        User userExample = new User();
+        userExample.setUsername("wangwu");
+        List<User> users = service.queryUsers(userExample);
+        for (User user : users) {
+            System.out.println(user);
+        }
+        System.out.println();
     }
 }
