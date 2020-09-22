@@ -1,7 +1,0 @@
-<mapper namespace="test">
-    <select id="selectByPrimaryKey" parameterType="com.shrm.pojo.User"
-            resultType="com.shrm.pojo.User" statementType="prepared" >
-        select * from users where id = #{id}
-    </select>
-
-</mapper>
